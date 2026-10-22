@@ -1,0 +1,51 @@
+<!doctype html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>코드페어 본선 체크</title><style>
+body{font-family:system-ui,-apple-system,"Apple SD Gothic Neo",sans-serif;margin:0;background:#f4f5f7;color:#222}
+header{position:sticky;top:0;background:#fff;padding:12px 16px;box-shadow:0 1px 4px #0002;z-index:2}
+h1{font-size:18px;margin:0 0 6px}.bar{height:8px;background:#e3e5e8;border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:#2e9e5b;width:0}
+.meta{font-size:13px;color:#666;margin-top:6px;display:flex;justify-content:space-between;gap:8px}
+main{padding:12px}.warn{background:#fff4d6;border:1px solid #f0c94a;border-radius:10px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+h2{font-size:15px;margin:16px 4px 6px;color:#555}
+.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;background:#fff;border-radius:10px;padding:10px 12px;margin-bottom:6px;font-size:15px}.row.on .t{text-decoration:line-through;color:#999}.row .t{flex:1;min-width:55%}.bx{display:flex;gap:6px;flex-wrap:wrap}.cb{display:flex;align-items:center;gap:4px;font-size:13px;background:#f1f3f5;border-radius:8px;padding:6px 8px}.cb.on{background:#dff3e6}.cb small{margin-left:4px}
+label.x{display:flex;align-items:center;gap:12px;background:#fff;border-radius:10px;padding:14px;margin-bottom:6px;font-size:16px}
+input[type=checkbox]{width:24px;height:24px;flex:none}label.on span.t{text-decoration:line-through;color:#999}
+small{margin-left:auto;color:#2e9e5b;font-size:12px;white-space:nowrap}button{font-size:13px;border:1px solid #ccc;background:#fff;border-radius:6px;padding:4px 8px}
+</style></head><body><header><h1>코드페어 본선 체크</h1><div class="bar"><i id="bar"></i></div>
+<div class="meta"><span id="cnt"></span><span><span id="st">연결 중…</span> <button id="nm"></button></span></div></header>
+<main><div class="warn"><b>📍 광주 김대중컨벤션센터 전시동 1층 다목적홀</b> (서구 상무누리로 30)<br>
+<b>금 10/23</b> 16:00 학교 출발 → 유탑부티크호텔 → 팀별 연습<br>
+<b>토 10/24</b> 07:00 기상 · 08:00 택시 · 08:30 입장·설치 · <b>10:30 심사 시작</b> · 18:00 종료 · 21:30~22:30 부산(가야동 연구실) 도착<br>
+⚠️ <b>정정:</b> 심사는 10:00 아닌 <b>10:30</b> 시작. 설치 08:30~10:10, 참가자 외 퇴장 10:20~10:30.<br>
+<b>핵심 6:</b> A0 포스터 4장(현장 출력 불가) · 시연 장비 직접 지참 · 현장 인터넷 없음(에그·오프라인 백업) · 보호자·교사 10:20 퇴장 · 학생 18:00 종료 원칙 · 음식 반입 불가<br>
+<small style="color:#777">주최 제공: 3×3m 부스, 테이블 1, 의자, 2구 멀티탭 1, 폼보드·양면테이프</small></div>
+<div id="list"></div><p style="text-align:center"><button id="rs">전체 초기화</button></p></main>
+<script>
+const G=[["① 인쇄·서류 준비물", [["A0 포스터 2장 — 정확히 A0 크기로 인쇄", ["1팀", "2팀"]], ["포스터 원본 파일 — 출력용 PDF + 수정 가능한 원본", ["1팀", "2팀"]], ["작품설명서 — 지참 및 인쇄 상태", ["1팀", "2팀"]], ["시연·발표 자료 — 실행 파일, 발표자료 최종본", ["1팀", "2팀"]], ["자료 백업 — USB/로컬 폴더 별도 사본", ["1팀", "2팀"]], ["사전제출 확인 — 요약서·설명서·포스터·참가자 사진", ["1팀", "2팀"]]]], ["① 포스터 내용 최종 검수", [["개발 동기·작품 설명·기대효과가 명확한가", ["1팀", "2팀"]], ["팀명·과제명만, 학교명·학생 이름은 제외했나", ["1팀", "2팀"]], ["사진·이미지 출처 표기 (직접 촬영: “직접촬영”)", ["1팀", "2팀"]], ["유해 이미지·출처 불명 자료 없음", ["1팀", "2팀"]], ["A0 인쇄물 잘림·오탈자·저해상도 없음", ["1팀", "2팀"]]]], ["① 인쇄소 수령 전", [["총 4장(1팀 2 + 2팀 2) / A0 확인", null], ["접지 않고 운반할 포장 준비", null], ["사전자료 제출(기한 10/11 15:00) 완료 여부 확인", null]]], ["② 팀별 시연장비", [["작품 본체·모형 — 파손 방지 포장, 고정", ["1팀", "2팀"]], ["노트북·충전기 — 시연에 필요한 전체 수량", ["1팀", "2팀"]], ["프로그램·데이터 — 실행 파일, 모델, 데이터 로컬 보관", ["1팀", "2팀"]], ["연결 케이블 — USB / HDMI / USB-C 등", ["1팀", "2팀"]], ["센서·부품·제어기 — 센서, 보드, 액추에이터", ["1팀", "2팀"]], ["전원·건전지 — 충전 상태, 어댑터, 배터리", ["1팀", "2팀"]], ["마우스·입력기기", ["1팀", "2팀"]], ["예비 부품 — 케이블, 부품, 건전지", ["1팀", "2팀"]], ["시연 순서표 — 실행 → 시연 → 종료 절차", ["1팀", "2팀"]]]], ["② 공통 장비", [["휴대용 와이파이 에그 + 충전기 (현장 인터넷 없음)", null], ["테더링 등 예비 인터넷 방법 정하기", null], ["공용 운반 상자·카트·완충재, 팀별 분리·운반자 지정", null], ["출발 전: 에그 2팀 동시접속 시험", null], ["인터넷 장애 시 오프라인 시연 가능 확인", null]]], ["③ 10/24 본선 시간표", [["08:30~10:10 등록·작품·포스터 설치 → 설치 완료", null], ["10:10~10:20 오리엔테이션 → 참여", null], ["10:20~10:30 장내 정리 → 인솔자 퇴장", null], ["10:30~11:40 심사 1차 → 학생 부스 대기", null], ["11:40~12:40 중식·휴식 → 도시락 제공", null], ["12:40~15:00 심사 계속 → 대기 시각 확인", null], ["15:00~15:20 휴식 → 퇴장 불가", null], ["15:20~18:00 심사 계속 → 18:00 종료", null]]], ["③ 심사 주의사항", [["팀별 타임테이블 받고 심사 20분 전 전원 부스 대기", null], ["사전 시연으로 작동 확인 (미작동 시 제외 가능)", null], ["발표 5분+질의 5분 × 심사위원 5회 대비", null], ["타 작품 무단 촬영·접촉·심사 방해 금지", null], ["음식 반입 불가 · 뚜껑 음료도 사전 허가", null]]], ["④ 학생 개인 짐", [["작은 가방 1개", null], ["여벌 속옷·양말", null], ["간단한 세면도구", null], ["잠옷·여벌 옷", null], ["학교명·이름 없는 편한 사복 (교복·단체복 X)", null], ["큰 캐리어·부피 큰 짐 지양", null]]], ["④ 보호자 사전 확인", [["광주에 따로 오실 보호자 여부 · 방문 일정", null], ["본선 후 부모님과 개별 귀가할 학생 여부 (승합밴 명단 제외)", null], ["부산 도착 약 1시간 전 학부모 단체방 위치 공지", null]]], ["⑤ 금 10/23 · 출발 전", [["A0 포스터 4장·팀별 작품설명서·자료 백업", null], ["작품 본체·노트북·충전기·케이블·에그 적재", null], ["학생 6명 탑승, 좌석·안전벨트·비상 연락처", null]]], ["⑤ 토 10/24 · 설치 전", [["08:30 등록 후 지정 부스에서 설치", null], ["포스터 2장씩 부착 (주최 측 도구만)", null], ["전원·인터넷·프로그램 시연 테스트, 심사 시간표 확인", null]]], ["⑤ 토 10/24 · 심사 종료 후", [["운영진 허용 후 재입장, 부스 원상복구", null], ["노트북·작품·포스터·충전기·부품 반납/회수", null], ["학생 6명 및 개별 귀가자 보호자 인계", null]]], ["⑤ 팀별 인수인계", [["1팀", ["장비확인", "포스터·자료", "철거"]], ["2팀", ["장비확인", "포스터·자료", "철거"]], ["공통", ["장비확인", "포스터·자료", "철거"]]]], ["⑥ 학생 이동·인계", [["학생 1", ["금 탑승", "토 확인", "인계"]], ["학생 2", ["금 탑승", "토 확인", "인계"]], ["학생 3", ["금 탑승", "토 확인", "인계"]], ["학생 4", ["금 탑승", "토 확인", "인계"]], ["학생 5", ["금 탑승", "토 확인", "인계"]], ["학생 6", ["금 탑승", "토 확인", "인계"]]]]],N=106,TOPIC="kcf1024-fa6dd5a169f0",B="https://ntfy.sh/"+TOPIC;
+let S={},R=0,name=localStorage.getItem("chk_name")||"";
+const nmB=document.getElementById("nm");function showName(){nmB.textContent=name?("👤 "+name):"이름 설정"}showName();
+nmB.onclick=()=>{const v=prompt("이름(챙긴 사람 표시용)",name);if(v!==null){name=v.trim();localStorage.setItem("chk_name",name);showName()}};
+function merge(m){if(m.r&&m.r>R){R=m.r;for(const k in S)if(S[k][2]<=R)delete S[k]}
+ if(m.s)for(const k in m.s){const v=m.s[k];if(v[2]>R&&(!S[k]||S[k][2]<v[2]))S[k]=v}}
+function box(k,lab){const v=S[k],on=v&&v[0];const l=document.createElement("label");l.className="cb"+(on?" on":"");
+ const c=document.createElement("input");c.type="checkbox";c.checked=!!on;c.onchange=()=>toggle(k,c.checked);l.append(c);
+ if(lab){const s=document.createElement("span");s.className="cl";s.textContent=lab;l.append(s)}
+ if(on&&v[1]){const s=document.createElement("small");s.textContent=v[1];l.appendChild(s)}return [l,on]}
+function render(){const L=document.getElementById("list");L.innerHTML="";let n=0;
+ G.forEach((gr,gi)=>{const h=document.createElement("h2");h.textContent=gr[0];L.appendChild(h);
+  gr[1].forEach((it,ii)=>{const row=document.createElement("div");row.className="row";const t=document.createElement("span");t.className="t";t.textContent=it[0];
+   if(!it[1]){const [l,on]=box(gi+"."+ii,"");if(on){n++;row.classList.add("on")}row.append(l,t)}
+   else{let all=1;const bx=document.createElement("div");bx.className="bx";it[1].forEach((c,ci)=>{const [l,on]=box(gi+"."+ii+"."+ci,c);if(on)n++;else all=0;bx.append(l)});if(all)row.classList.add("on");row.append(t,bx)}
+   L.appendChild(row)})});
+ document.getElementById("cnt").textContent="체크 "+n+" / "+N;document.getElementById("bar").style.width=(n*100/N)+"%"}
+function pub(extra){const s={};for(const k in S)s[k]=S[k];return fetch(B,{method:"POST",body:JSON.stringify(Object.assign({s,r:R},extra||{}))})}
+function toggle(i,on){S[i]=[on?1:0,on?name:"",Date.now()];render();pub()}
+document.getElementById("rs").onclick=()=>{if(confirm("모든 체크를 지울까요? (모두에게 적용)")){R=Date.now();S={};render();pub()}};
+function handle(e){try{merge(JSON.parse(e.message))}catch(_){}}
+async function load(){try{const r=await fetch(B+"/json?poll=1&since=all");const t=await r.text();
+ t.split("\n").forEach(l=>{if(l.trim()){const e=JSON.parse(l);if(e.event==="message")handle(e)}});render()}catch(_){}}
+function live(){const es=new EventSource(B+"/sse");const st=document.getElementById("st");
+ es.onopen=()=>{st.textContent="🟢 실시간";load()};es.onmessage=ev=>{handle(JSON.parse(ev.data));render()};es.onerror=()=>{st.textContent="🔴 재연결 중"}}
+render();load().then(live);
+setInterval(load,15000);
+setInterval(()=>{if(Object.keys(S).length||R)pub({k:1})},30*60*1000);
+</script></body></html>
